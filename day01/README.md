@@ -1,11 +1,11 @@
 # day01
 
-(https://adventofcode.com/2022/day/1)
+<https://adventofcode.com/2022/day/1>
 
 ## Day 1 Part 1
 
 Input is a text file of numbers, one number per line with a blank line delineating groups.  
-Each line represents the calories in one snack carried by an elf, and each group of numbers 
+Each line represents the calories in one snack carried by an elf, and each group of numbers
 between blank lines is one elf's inventory.  
 
 Desired output is the total of the largest group.
