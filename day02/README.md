@@ -2,7 +2,7 @@
 
 <https://adventofcode.com/2022/day/2>
 
-## Day 1 Part 2
+## Day 2 Part 1
 
 Input is a text file of pairs of numbers e.g.:
 
@@ -36,3 +36,30 @@ Here are all the possibilities:
 ````
 
 Desired output is total score of all the rounds.
+
+## Day 2 part 2
+
+Problem now restated...
+
+The X, Y, Z now mean lose, draw and win, respectively.  Scoring doesn't change.
+
+Now you have to
+
+  1. read the first character, to determine what the other player played,
+  1. read the second character to determine the round outcome
+  1. determine what you need to play to get the outcome,
+  1. finally add the score for this round to the total score
+
+I think this is only a minor change, the scoring dict just needs to be updated:
+
+````text
+    AX -> other plays rock, you lose, you must have played scissors -> 3
+    AY -> other plays rock, you draw, you must have played rock -> 4
+    AZ -> other plays rock, you win, you must have played paper -> 8
+    BX -> other plays paper, you lose, you must have played rock -> 1
+    BY -> other plays paper, you draw, you must have played paper -> 5
+    BZ -> other plays paper, you win, you must have played scissors -> 9
+    CX -> other plays scissors, you lose, you must have played paper -> 2
+    CY -> other plays scissors, you draw, you must have played scissors -> 6
+    CZ -> other plays scissors, you win, you must have played rock -> 7
+````
