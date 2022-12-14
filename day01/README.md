@@ -2,7 +2,7 @@
 
 (https://adventofcode.com/2022/day/1)
 
-Input is a text file of numbers, one number per line with a blank line deliniating groups.  
+Input is a text file of numbers, one number per line with a blank line delineating groups.  
 
 Desired output is the total of the largest group.
 
