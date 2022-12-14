@@ -12,7 +12,7 @@ Desired output is the total of the largest group.
 
 ... this looks like a job for `awk`, because `awk` doesn't get enough love.
 
-# Day 1 Part 2
+## Day 1 Part 2
 
 Oh, so now that I used `awk` part 2 wants me to do something that's hard in awk...
 get the sum of the calories carried by the _top three_ elves.  Would have been easy in
