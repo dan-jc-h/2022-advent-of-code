@@ -29,5 +29,5 @@ BEGIN{
     }
 }
 END{
-    print elfWithMaxTotal
+    print elfMaxTotal
 }
