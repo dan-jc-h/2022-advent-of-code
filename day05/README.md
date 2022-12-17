@@ -31,3 +31,5 @@ move 1 from 1 to 2
 
 ## Day 5 Part 2
 
+Part 2 is a minor change in how boxes get stacked that really only changes a small chunk of code.  I'm putting it
+in a separate program just for simplicity, it could be handled with a part1/part2 switch in one program pretty easily.

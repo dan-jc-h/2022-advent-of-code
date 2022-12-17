@@ -1,4 +1,4 @@
-# 2022 Advent of Code - Day 5 Part 1
+# 2022 Advent of Code - Day 5 Part 2
 #
 # This is pretty ugly and a lot depends on how worried you want to be about the input data.  
 # The applying part is parsing the stack depiction at the start of the data file, can cranes 
@@ -21,6 +21,9 @@
 # I decided to go with storing an explicit stackname (number) instead of relying solely on 
 # position in the list, because there no indication that the cranes are numbered contiguously 
 # or even starting at 1 etc.
+#
+# Part 2 is a change to how boxes get moved.
+#
 
 import re
 
@@ -86,11 +89,14 @@ with open(inputFileName, 'r') as inputFile:
         toStackNumber=int(tokens[2])
         fromStack=getStackByNumber(stacks,fromStackNumber)
         toStack=getStackByNumber(stacks,toStackNumber)
-        print(fromStackNumber,toStackNumber)
-        print(fromStack,toStack)
-        # execute moves
-        for x in range(nBoxes):
-            toStack.append(fromStack.pop())
+        # execute moves - this is where the part 1 code and part 2 code differ
+        # part 2 move: move a sub array from source to dest, then del source subarray
+        movingBoxes = fromStack[-1-(nBoxes-1):]
+        print(f'{fromStack} -> <{movingBoxes}> -> {toStack}')
+        toStack = toStack.extend(movingBoxes) # yeah...extend, not append... 
+        del fromStack[-1-(nBoxes-1):]
+        print(stacks)
+        print(" - - -")
 print("Final stacks:\n")
 print(stacks)
 print(f'\nTop Boxes: {topBoxes(stacks)}')
