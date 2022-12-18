@@ -43,4 +43,43 @@ def ls(n:Dir) -> str:
         output = output + str(f.size) + " " + f.name + "\n"
     return output
 
-#def cd(pwd):
+# Find a directory, by name in the list of directories, below a directory
+#   input: dn: the name of the directory you are looking for
+#   input: dir: the directory to look in
+#   return: the directory we are seeking
+#
+def findDir(dn:str,dir:Dir)-> Dir:
+    for d in dir.dirs:
+        if dn == d.name:
+            return d
+# treeSize - add up all teh file sizes in a tree
+def treeSize(dir:Dir)->int:
+    totalSize = 0
+    #first add up sizes of files in this dir...
+    for f in dir.files:
+        totalSize=totalSize+f.size
+    #... then add sizes of all files below this directory
+    for d in dir.dirs:
+        totalSize=totalSize+treeSize(d)
+    print(f'Treesize at {dir.name}: {totalSize} bytes')
+    return totalSize
+
+#
+# sumOfTreesUnder100k - you want to 
+#
+def sumOfTreesUnder100k(dir:Dir)->int:
+    sum = 0
+    if treeSize(dir)<=100000:
+        sum=sum+treeSize(dir)
+    for d in dir.dirs:
+        sum=sum+sumOfTreesUnder100k(d)
+    print(f"{dir.name}:{sum}")
+    return(sum)
+
+
+# def traverseTree(root: Dir) -> str:
+
+#     for n in root.dirs:
+#         output = traverseTree(n)
+
+#     return output
