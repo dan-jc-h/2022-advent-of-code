@@ -1,4 +1,6 @@
+# 2022 Advent of Code - Day 7 - Module
 
+# Directory class, represents a directory with a name, parent link, an array of file and an array of subdirs
 class Dir:
     def __init__(self, _parent, _name: str):
         self.parent = _parent
@@ -18,14 +20,17 @@ class Dir:
             fileNames = fileNames + f.name +","
         return f'[{self.name}] parent:{parentName}, dirs:{dirNames} files:{fileNames}'
 
+
+# File class, represents a file with a name, and size
 class File:
     def __init__(self, _name: str, _size: int):
         self.name = _name
         self.size = _size
 
+
+# indented string representation of a tree or directories and files, just makes it easier to visualize
 INDENT = 0
 INDENT_SIZE = 4
-
 def showTree(root: Dir) -> str:
     global INDENT
     output = " " * INDENT_SIZE * INDENT + str(root)
@@ -52,7 +57,8 @@ def findDir(dn:str,dir:Dir)-> Dir:
     for d in dir.dirs:
         if dn == d.name:
             return d
-# treeSize - add up all teh file sizes in a tree
+
+# treeSize - add up all the file sizes in a tree
 def treeSize(dir:Dir)->int:
     totalSize = 0
     #first add up sizes of files in this dir...
@@ -65,7 +71,8 @@ def treeSize(dir:Dir)->int:
     return totalSize
 
 #
-# sumOfTreesUnder100k - you want to 
+# sumOfTreesUnder100k - add up the amount of space used in directories, 
+# BUT ONLY IF THE SIZE IS LESS THAN 100,000
 #
 def sumOfTreesUnder100k(dir:Dir)->int:
     sum = 0
@@ -75,11 +82,3 @@ def sumOfTreesUnder100k(dir:Dir)->int:
         sum=sum+sumOfTreesUnder100k(d)
     print(f"{dir.name}:{sum}")
     return(sum)
-
-
-# def traverseTree(root: Dir) -> str:
-
-#     for n in root.dirs:
-#         output = traverseTree(n)
-
-#     return output
