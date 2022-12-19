@@ -67,7 +67,7 @@ def treeSize(dir:Dir)->int:
     #... then add sizes of all files below this directory
     for d in dir.dirs:
         totalSize=totalSize+treeSize(d)
-    print(f'Treesize at {dir.name}: {totalSize} bytes')
+    #print(f'Treesize at {dir.name}: {totalSize} bytes')
     return totalSize
 
 #
@@ -82,3 +82,11 @@ def sumOfTreesUnder100k(dir:Dir)->int:
         sum=sum+sumOfTreesUnder100k(d)
     print(f"{dir.name}:{sum}")
     return(sum)
+
+def makeSpaceList(dir:Dir):
+    spaceList = []
+    spaceList.append(treeSize(dir))
+    for d in dir.dirs:
+        print(d.name)
+        spaceList.extend(makeSpaceList(d))
+    return spaceList
