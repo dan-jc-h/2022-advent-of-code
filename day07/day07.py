@@ -9,7 +9,10 @@
 #   - dir d, dir: create directory d and add it
 #   - num fname, file: create and add it
 #   - cd .. - change working dir to parent
-#  Scan tree and get sum of all directories which do not exceed 100k bytes
+#  
+# Part 1 - Scan tree and get sum of all directories which do not exceed 100k bytes
+#
+# Part 2 - find the size of the smallest directory to delete, to free up space for an update.
 
 from  day07lib import *
 import re
@@ -22,6 +25,7 @@ root = Dir(None, "/")
 pwd = root
 
 # parse the file, (heavy reliance on re here) and build tree
+# this is pretty fragile
 with open(inputFileName, 'r') as inputFile:
     for line in inputFile.readlines():
         print(line.strip())
@@ -50,9 +54,10 @@ with open(inputFileName, 'r') as inputFile:
             print(f'file - create file {fileName}, {fileSize} bytes')
             pwd.files.append(File(fileName,int(fileSize)))
         else:
-            print("*** UNRECOGNIZED INPUT - this is a problem and should be an exception")
+            #FIXME - this should probably throw an exception
+            print("*** UNRECOGNIZED INPUT - this is a problem")
         
-# Lest see what we have!
+# Lets see what we have!
 print(showTree(root))
 
 # get total of all subtrees with size less than 100000 - this is the requested data for Part 1
@@ -76,14 +81,16 @@ print(f'Free space:                {freeSpace:>8}')
 print(f'Space required for update: {SPACE_REQUIRED_FOR_UPDATE:>8}')
 print(f'Must free at least:        {needToFree:>8}')
 
+# generate a list of the size of all directories
 spaceList = makeSpaceList(root)
-print(spaceList)
+# Delete list elements which don't which are too small to free up enough space.
+# There's probably a better way to do this.  Want to delete items under a specific size, by
+# going *backwards* through the array you avoid messing up indexes.
 for i in range(len(spaceList)-1,-1,-1):
     if spaceList[i] < needToFree:
         del spaceList[i]
-print(spaceList)
 spaceList.sort()
-print(spaceList)
+print("\n Part 2: Size of smallest directory to delete to free up space for update:")
 print(spaceList[0])
 
     
