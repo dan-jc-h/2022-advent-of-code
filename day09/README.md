@@ -18,6 +18,11 @@ There are specific rules about how the tail follows the head.
 
 Part 1 wants the number of distinct positions that the tail visits.
 
-## Implementation
+### Implementation
 
 I think this can be down with out and array, just tracking coordinates of the head and then updating coordinates of the tail.  THen you just record a list (actually a set of tuples - you're asked for the distinct number of places) of places the tail goes, then just grab the size of that list.
+
+# Part 2
+
+Pretty major escalation!  Now you have a ten unit long rope, and you have to calculate the position of each piece of rope as it moves and follows the one ahead of it.
+
