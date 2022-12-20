@@ -26,3 +26,5 @@ I think this can be down with out and array, just tracking coordinates of the he
 
 Pretty major escalation!  Now you have a ten unit long rope, and you have to calculate the position of each piece of rope as it moves and follows the one ahead of it.
 
+Going to put this in a new program otherwise it will just be messy.
+
