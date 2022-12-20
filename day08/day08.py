@@ -33,8 +33,6 @@ def howFarToEqualOrGreaterValue(val:int,ar:np.ndarray)->int:
             return i
     # for to the end of the array - so we can see the entire length
     return len(ar)
-        
-
 
 def scenicScore(i:int,k:int,forest:np.ndarray)->int:
     """Calculate Scenic Score for a tree in the forest
@@ -74,13 +72,13 @@ def scenicScore(i:int,k:int,forest:np.ndarray)->int:
 def amIVisible(height:int,trees:np.ndarray)->bool:
     """Determine if a tree is visible
 
-    A tree is visible if all the trees in the sightline to it are 
+    A tree is visible if all the trees in the sight line to it are 
     shorter.  If any tree is as tall, or taller, then the tree
     can't be seen.
 
     Args:
         height (int): height of the subject tree
-        trees (np.ndarray): a 1D array of tree heights along the sightline
+        trees (np.ndarray): a 1D array of tree heights along the sight line
 
     Returns:
         bool: True=Tree can be seen.  False=Tree cannot be seen
@@ -118,7 +116,7 @@ visibility[:,visibility.shape[1]-1]=1
 #
 # If a tree is visible from any direction, set the flag
 # in the visibility matrix and we are done, if the tree
-# is not visible from another dorection it doesn't make
+# is not visible from another direction it doesn't make
 # it invisible from this direction.
 for i in range(1,(forest.shape)[0]-1):
     for j in range(1,(forest.shape)[1]-1):
@@ -142,11 +140,15 @@ print(f'Part 1, number of trees visible: {visibility.sum()}')
 
 # determine maximum scenic score
 maxScenicScore = 0
+MaxI=0
+MaxJ=0
 for i in range((forest.shape)[0]):
     for j in range((forest.shape)[1]):
         print(i,j)
         thisTreesScore = scenicScore(i,j,forest)
         if thisTreesScore>maxScenicScore:
             maxScenicScore=thisTreesScore
+            MaxI=i
+            MaxJ=j
 
-print(f'Part 2: Max Scenic Score is: {maxScenicScore}')
+print(f'Part 2: Max Scenic Score is: {maxScenicScore}.  This tree is at [{MaxI},{MaxJ}]')

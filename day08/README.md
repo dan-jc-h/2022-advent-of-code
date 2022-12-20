@@ -18,14 +18,14 @@ all the trees from the edge to the subject must be shorter than the subject.
 
 ### Implementation
 
-This looks like a job for `numpy`!  (Which is undoubtedly overkill)
+This looks like a job for `numpy`!  (Which is undoubtedly overkill, but I need to learn)
 
 ## Part 2
 
-Next step is to determine _"scenic score"_ for each tree and then find 
-the maximum scenic score.  The actual guts of figuring that out is 
-ugly, but it's just a matter of adding one (ugly) function to the 
-program, it can even be called in the processing loop from part 1, 
+Next step is to determine _"scenic score"_ for each tree and then find
+the maximum scenic score.  The actual guts of figuring that out is
+ugly, but it's just a matter of adding one (ugly) function to the
+program, it can even be called in the processing loop from part 1,
 but I'll separate it out to clarity
 
 This can be added to the same program as part 1 so you only load the forest array once.
