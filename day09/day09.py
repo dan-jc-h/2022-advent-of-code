@@ -8,7 +8,8 @@
 # 5. record where Tail is
 # 6. report how many distinct locations the Tail visited
 
-inputFileName = "day09-sample-data.txt"
+inputFileName = "day09-input-data.txt"
+#inputFileName = "day09-sample-data.txt"
 
 class RopeEnd:
     def __init__(self,_location:tuple) -> None:
@@ -24,7 +25,7 @@ def followHead(h:RopeEnd,t:RopeEnd)-> tuple:
         t (RopeEnd): tail or rope
 
     Returns:
-        tuple: new location for head of rope
+        tuple: new location for tail of rope
     """
     (hx,hy)=h.location
     (tx,ty)=t.location
@@ -35,11 +36,44 @@ def followHead(h:RopeEnd,t:RopeEnd)-> tuple:
     #    tail moves 1 towards head, along the row or column.
     # if head and tail are NOT adjacent and are not in the same
     #    row or column, then T moves one diagonally
+    # default is to stay still
+    xMove=0
+    yMove=0
+    if h.location==t.location:
+        #H is on top of T so newLocation is already set correctly
+        pass
+    elif abs(hx-tx)<=1 and abs(hy-ty)<=1:
+        #H and T are adjacent
+        pass
+    elif hy==ty:
+        #H and T separated, but in same row
+        if hx>tx: # hx-tx is +
+            xMove = +1
+        if tx>hx: # hx-tx is -
+            xMove = -1
+    elif hx==tx:
+        #H and T separated, but in same column
+        if hy>ty: # hx-tx is +
+            yMove = +1
+        if ty>hy: # hx-tx is -
+            yMove = -1
+    else:
+        #H and T separated, but in different colum and row
+        if hx>tx: # hx-tx is +
+            xMove = +1
+        if tx>hx: # hx-tx is -
+            xMove = -1
+        if hy>ty: # hx-tx is +
+            yMove = +1
+        if ty>hy: # hx-tx is -
+            yMove = -1
+    newLocation=(t.location[0]+xMove,t.location[1]+yMove)
+    return newLocation
 
 
 head = RopeEnd((0,0))
 tail = RopeEnd((0,0))
-whereHasTheTailBeen={}
+whereHasTheTailBeen=set()
 
 print("Starting Conditions:")
 print(f'  Head is here: {head}')
@@ -70,6 +104,8 @@ with open(inputFileName, 'r') as inputFile:
                 exit()            
             print(f'Head now at : {head}')
             tail.location=followHead(head,tail)
+            whereHasTheTailBeen.add(tail.location)
+            print(f'Tail now at: {tail}')
 
 
 
@@ -77,5 +113,6 @@ print("Ending Conditions:")
 print(f'  Head is here: {head}')
 print(f'  Tail is here: {tail}')
 print(f'  Places Tail has been: {whereHasTheTailBeen}')
+print(f'  Tail has been {len(whereHasTheTailBeen)} locations.')
 
         
