@@ -18,7 +18,7 @@ all the trees from the edge to the subject must be shorter than the subject.
 
 ### Implementation
 
-This looks like a job for `numpy`!  (Which is undoubtedly overkill, but I need to learn)
+This looks like a job for `numpy`!  (Which is undoubtedly overkill, but it's time I learned it.)
 
 ## Part 2
 
@@ -28,4 +28,4 @@ ugly, but it's just a matter of adding one (ugly) function to the
 program, it can even be called in the processing loop from part 1,
 but I'll separate it out to clarity
 
-This can be added to the same program as part 1 so you only load the forest array once.
+This can be added to the same program as Part 1 so you only load the forest array once.

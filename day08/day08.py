@@ -17,7 +17,7 @@ inputFileName = "day08-input-data.txt"
 #inputFileName = "day08-sample-data.txt"
 
 def howFarToEqualOrGreaterValue(val:int,ar:np.ndarray)->int:
-    """Far far do we need ot walk along an array to get to an equal or greater value
+    """How far do we need to walk along an array to get to an equal or greater value
 
     Args:
         val (int): a value
