@@ -38,25 +38,25 @@ def moveKnot(k1:knot,k2:knot):
     xMove=0
     yMove=0
     if k1.location==k2.location:
-        #H is on top of T so newLocation is already set correctly
+        #k1 is on top of k2 so newLocation is already set correctly
         pass
     elif abs(k1x-k2x)<=1 and abs(k1y-k2y)<=1:
-        #H and T are adjacent
+        #k1 and k2 are adjacent
         pass
     elif k1y==k2y:
-        #H and T separated, but in same row
+        #k1 and k2 separated, but in same row
         if k1x>k2x: # k1x-k2x is +
             xMove = +1
         if k2x>k1x: # k1x-k2x is -
             xMove = -1
     elif k1x==k2x:
-        #H and T separated, but in same column
+        #k1 and k2 separated, but in same column
         if k1y>k2y: # k1x-k2x is +
             yMove = +1
         if k2y>k1y: # k1x-k2x is -
             yMove = -1
     else:
-        #H and T separated, but in different colum and row
+        #k1 and k2 separated, but in different colum and row
         if k1x>k2x: # k1x-k2x is +
             xMove = +1
         if k2x>k1x: # k1x-k2x is -
