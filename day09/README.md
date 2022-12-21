@@ -28,3 +28,5 @@ Pretty major escalation!  Now you have a ten unit long rope, and you have to cal
 
 Going to put this in a new program otherwise it will just be messy.
 
+Looks like a job for a linked list!  Bit of a rewrite of part1, but reusing some pieces
+
