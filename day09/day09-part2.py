@@ -108,6 +108,7 @@ for i in range(ROPE_LENGTH-1):
     newKnot = knot((0,0),rope)
     rope = newKnot
 
+# need to keep track of the unique places the tail goes... set is perfect for this.
 whereHasTheTailBeen=set()
 
 print("Starting Conditions:")
@@ -115,6 +116,8 @@ print(f'  Rope: {rope}')
 whereHasTheTailBeen.add(getTail(rope).location)
 print(f'  Places Tail has been: {whereHasTheTailBeen}')
 
+# walk through the file executing commands as documented on the Advent of Code website
+# <https://adventofcode.com/2022/day/9>
 with open(inputFileName, 'r') as inputFile:
     for line in inputFile.readlines():
         command,count = line.split(' ')
@@ -136,9 +139,11 @@ with open(inputFileName, 'r') as inputFile:
             else:
                 #FIXME - make this an exception
                 print("***PROBLEM")
-                exit()            
+                exit()
+            #after each move of the head we have to move the rest of the rope            
             moveRope(rope)
             print(rope)
+            #update where the tail has been
             whereHasTheTailBeen.add(getTail(rope).location)
 
 print("Ending Conditions:")
