@@ -1,6 +1,7 @@
 # 2022 Advent of Code - Day 10
 #
-# this is a simulation of a simplified CPU
+# Part 1 - this is a simulation of a simplified CPU
+# Part 2 - we add a display
 
 from enum import Enum
 
@@ -50,6 +51,30 @@ class Cpu:
             self.execute()
             self.state=CPUState.WAITING
 
+CRT_WIDTH = 40
+CRT_HEIGHT = 6
+
+class CRT:
+    def __init__(self):
+        self.width=CRT_WIDTH
+        self.height=CRT_HEIGHT
+        self.buffer=[]
+        for h in range(self.height):
+            self.buffer.append([])
+            for w in range(self.width):
+                self.buffer[h].append(" ")
+    def __str__(self):
+        output=""
+        for h in range(self.height):
+            for w in range(self.width):
+                output=output+self.buffer[h][w]
+            output=output+"\n"
+        return (output)
+    def update(self,_cpu:Cpu,x:int,y:int):
+        x=x-1 # annoying correction
+        if x>=_cpu.X-1 and x<=_cpu.X+1 :
+            print(f'  in display.update -> x:{x} y:{y} X-reg={_cpu.X}')
+            self.buffer[y][x]="#"
 
 def fnNoop(c:Cpu,p:str):
     #print(":fnNoop")
@@ -60,8 +85,8 @@ def fnAddx(c:Cpu,y:int):
     c.X = c.X + int(y)
 
 
-inputFileName = "day10/day10-simple-sample-data.txt"
-inputFileName = "day10/day10-sample-data.txt"
+#inputFileName = "day10/day10-simple-sample-data.txt"
+#inputFileName = "day10/day10-sample-data.txt"
 inputFileName = 'day10/day10-input-data.txt'
 
 
@@ -69,6 +94,9 @@ inputFileName = 'day10/day10-input-data.txt'
 adventOMatic9000 = Cpu()
 adventOMatic9000.instructions.add(Instruction("noop",1,fnNoop))
 adventOMatic9000.instructions.add(Instruction("addx",2,fnAddx))
+
+#create display
+display=CRT()
 
 #set up sampling
 SIGNAL_SAMPLE_POINTS=[20,60,100,140,180,220]
@@ -95,13 +123,19 @@ with open(inputFileName, 'r') as inputFile:
             pass
         else:
             exit() #FIXME - should be exception
-        #calculate signal strenght if we are at a sample point
+        #calculate signal strength if we are at a sample point
         if cycleCounter in SIGNAL_SAMPLE_POINTS:
             signalStrength=signalStrength+(cycleCounter*adventOMatic9000.X)
+        #update display
+        display.update(adventOMatic9000,cycleCounter%display.width,cycleCounter//display.width)
         #cycle the machine
         adventOMatic9000.cycle()
         cycleCounter = cycleCounter + 1
 
 print(f'Program complete after {cycleCounter} cycles and {programlineNumber} lines of instructions.')
 print(f'Signal Strength: {signalStrength}')
+
+
+
+print(display)
 
