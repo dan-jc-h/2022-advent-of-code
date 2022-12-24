@@ -21,12 +21,12 @@ class Monkey:
         return output
 
 #show me the monkeys!
-def showMeTheMonkeys(troop:[])->None:
+def showMeTheMonkeys(troop:list[Monkey])->None:
     for i,m in enumerate(troop):
         print(f"Monkey {i}: {m}")
 
 inputFileName = "day11/day11-sample-data.txt"
-inputFileName = "day11/day11-input-data.txt"
+#inputFileName = "day11/day11-input-data.txt"
 
 #our troop of monkeys...
 troop=[]
@@ -74,7 +74,7 @@ with open(inputFileName, 'r') as inputFile:
                 monkeyThrowOnFalse=int((monkeyPropertyText.split(' '))[-1])
                 print(f'      on false, throw to: {monkeyThrowOnFalse}')
             else:
-                Print("ERROR - Unrecognized Monkey property encountered, aborting.") # TODO should be exception
+                print("ERROR - Unrecognized Monkey property encountered, aborting.") # TODO should be exception
                 exit()
             #make a monkey and add to the troop
         troop.append(Monkey(monkeyItems,monkeyOperation,monkeyDivisor,monkeyThrowOnTrue,monkeyThrowOnFalse))
@@ -87,7 +87,7 @@ lcmFactor=1
 for m in troop:
     lcmFactor = lcmFactor * m.testDivisor
 
-MAX_ROUNDS=10000
+MAX_ROUNDS=20
 round=0
 while round<MAX_ROUNDS:
     round=round+1

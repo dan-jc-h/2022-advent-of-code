@@ -21,7 +21,7 @@ class Monkey:
         return output
 
 #show me the monkeys!
-def showMeTheMonkeys(troop:[])->None:
+def showMeTheMonkeys(troop:list[Monkey])->None:
     for i,m in enumerate(troop):
         print(f"Monkey {i}: {m}")
 
@@ -74,7 +74,7 @@ with open(inputFileName, 'r') as inputFile:
                 monkeyThrowOnFalse=int((monkeyPropertyText.split(' '))[-1])
                 print(f'      on false, throw to: {monkeyThrowOnFalse}')
             else:
-                Print("ERROR - Unrecognized Monkey property encountered, aborting.") # TODO should be exception
+                print("ERROR - Unrecognized Monkey property encountered, aborting.") # TODO should be exception
                 exit()
             #make a monkey and add to the troop
         troop.append(Monkey(monkeyItems,monkeyOperation,monkeyDivisor,monkeyThrowOnTrue,monkeyThrowOnFalse))
