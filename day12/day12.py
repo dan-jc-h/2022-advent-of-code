@@ -10,6 +10,7 @@ class Maze:
         self.whereIveBeen = []
         self.start = tuple()
         self.end = tuple()
+        self.path = []
     def __str__(self)->str:
         if len(self.heightMap) == 0:
             return "Data must be loaded (with loadHeightMap()) before Maze can be used."
@@ -53,7 +54,7 @@ class Maze:
         maxRows = len(self.heightMap)
         maxCols = len(self.heightMap[0])
         #Check to make we are test location is in bounds
-        if x<0 or y<0 or x>maxCols or y>maxRows: 
+        if x<0 or y<0 or x>maxCols-1 or y>maxRows-1: 
             return False
         #Check to make sure we haven't been to the test location yet
         if self.whereIveBeen[y][x] == 1:
@@ -105,41 +106,73 @@ class Maze:
                 print("RIGHT")
                 dist4 = findShortestPath((x+1,y), end, nRows)
 
-    def findAnyPath(self, start)->bool:
-        print(f'{start}->{self.end}')
+    def findAPath(self, start)->bool:
+        #print(f'{start}->{self.end}')
         x=start[0]
         y=start[1]
-        self.whereIveBeen[y][x]=1 #FIXME - this is setting a whole column to 1
+        self.whereIveBeen[y][x]=1
+        self.path.append(start)
         nRows = len(self.heightMap)
         nCols = len(self.heightMap[0])
         if x==self.end[0] and y==self.end[1]: #start == end:
-            print("I'm at the end")
+            #print("I'm at the end")
             return True
         else:
             #if not in top row, probe up
             if self.canIMoveHere((x,y),(x,y-1)):
-                print("UP")
-                self.findAnyPath((x,y-1))
+                #print("UP")
+                self.findAPath((x,y-1))
             #if not in bottom row, probe down
             if self.canIMoveHere((x,y),(x,y+1)):
-                print("DOWN")
-                self.findAnyPath((x,y+1))
+                #print("DOWN")
+                self.findAPath((x,y+1))
             #if not in left col, probe left
             if self.canIMoveHere((x,y),(x-1,y)):
-                print("LEFT")
-                self.findAnyPath((x-1,y))
+                #print("LEFT")
+                self.findAPath((x-1,y))
             #if not in right col, probe right
             if self.canIMoveHere((x,y),(x+1,y)):
-                print("RIGHT")
-                self.findAnyPath((x+1,y))
+                #print("RIGHT")
+                self.findAPath((x+1,y))
 
             #not at end
             return False
+    def showPath(self)->str:
+        #make empty grid with dots
+        grid=[]
+        for r in range(len(self.heightMap)):
+            row = []
+            for c in range(len(self.heightMap[0])):
+                row.append(".")
+            grid.append(row)
+        #add in path
+        for stepNum in range(len(self.path)-1):
+            #print(self.path[stepNum], self.path[stepNum+1])
+            deltax = self.path[stepNum+1][0] - self.path[stepNum][0]
+            deltay = self.path[stepNum+1][1] - self.path[stepNum][1]
+            if (deltax,deltay) == (0,1): # down
+                grid[self.path[stepNum][1]][self.path[stepNum][0]] = 'V'
+            if (deltax,deltay) == (0,-1): # up
+                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '^'               
+            if (deltax,deltay) == (-1,0): # left
+                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '<'
+            if (deltax,deltay) == (1,0): # right
+                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '>'
+        #mark S and E
+        grid[self.start[1]][self.start[0]] = 'S'
+        grid[self.end[1]][self.end[0]] = 'E'        
+        #generate string
+        output = ""
+        for r in range(len(self.heightMap)):
+            for c in range(len(self.heightMap[0])):
+                output = output + grid[r][c]
+            output = output + "\n"
+
+        return output
 
 
-# *** TODO Need some kind of "I've been here" flags array, and some way to signal "dead end" back up the stack
-
-
+        return output     
+      
 
 # create the maze
 maze = Maze()
@@ -148,9 +181,13 @@ maze = Maze()
 with open(inputFileName, 'r') as inputFile:
     maze.loadHeightMapFromFile(inputFileName)
 
-
+print(f'Maze data loaded from {inputFileName}, here is the height map:')
 print(maze)
 
-maze.findAnyPath(maze.start)
+maze.findAPath(maze.start)
+
+print("Here is a path:")
+print(maze.showPath())
+print(f'Path length: {len(maze.path)}')
 
 
