@@ -13,6 +13,7 @@ class Maze:
         self.shortLength = 1000000
         self.length = 0
         self.hasPath=False
+        self.heartbeat = 0
     def __str__(self)->str:
         if len(self.heightMap) == 0:
             return "Data must be loaded (with loadHeightMap()) before Maze can be used."
@@ -75,36 +76,42 @@ class Maze:
             return False
         #We should be OK    
         return True
+    #TODO - I think we need to copy the path to a new "shortest path" every time we get to the end and find the path is at a minima
     def findShortestPath(self,start):
-        print(f'{start}->{self.end} length: {self.length}')
+        print(f'{start}->{self.end} length: {self.shortLength}')
+        self.heartbeat = self.heartbeat + 1
+        if self.heartbeat % 10000 == 0:
+            print(f'\t{self.heartbeat} calls to findShortestPath() - current shortest: {self.shortLength}.')
         x=start[0]
         y=start[1]
    
         if x==self.end[0] and y==self.end[1]: #start == end:
-            print("I'm at the end")
+            print(f"I'm at the end, length={self.shortLength}, path_{self.path}")
             self.hasPath=True
             self.shortLength=min([self.length,self.shortLength])
             return
         else:
             self.whereIveBeen[y][x]=1
             self.length = self.length + 1
+            self.path.append(start)
             #if not in top row, probe up
             if self.canIMoveHere((x,y),(x,y-1)):
-                print("UP")
+                #print("UP")
                 self.findShortestPath((x,y-1))
             #if not in bottom row, probe down
             if self.canIMoveHere((x,y),(x,y+1)):
-                print("DOWN")
+                #print("DOWN")
                 self.findShortestPath((x,y+1))
             #if not in left col, probe left
             if self.canIMoveHere((x,y),(x-1,y)):
-                print("LEFT")
+                #print("LEFT")
                 self.findShortestPath((x-1,y))
             #if not in right col, probe right
             if self.canIMoveHere((x,y),(x+1,y)):
-                print("RIGHT")
+                #print("RIGHT")
                 self.findShortestPath((x+1,y))
             self.whereIveBeen[y][x]=0
+            self.path.pop()
             self.length=self.length-1
 
     def findAPath(self, start)->bool:
@@ -174,8 +181,8 @@ class Maze:
 
         return output     
       
-#inputFileName="day12/day12-sample-data.txt"
-inputFileName="day12/day12-input-data.txt"
+inputFileName="day12/day12-sample-data.txt"
+#inputFileName="day12/day12-input-data.txt"
 
 # create the maze
 maze = Maze()
@@ -187,9 +194,12 @@ with open(inputFileName, 'r') as inputFile:
 print(f'Maze data loaded from {inputFileName}, here is the height map:')
 print(maze)
 
-print(maze.shortLength)
+print("Looking for shortest path...")
 maze.findShortestPath(maze.start)
-print(maze.shortLength)
+print(f'Shortest Path found is {maze.shortLength} units long.')
+print(f'{maze.heartbeat} calls to the shortest path routine were made.')
+print("Here is the shortest path:")
+print(maze.showPath())
 
 # print("Here is a path:")
 # print(maze.showPath())
