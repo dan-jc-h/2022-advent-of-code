@@ -2,7 +2,6 @@
 #   https://adventofcode.com/2022/day/12
 # Part 2 - Find the shortest path across a graph, being mindful of altitude.
 
-inputFileName="day12/day12-sample-data.txt"
 
 class Maze:
     def __init__(self):
@@ -11,6 +10,9 @@ class Maze:
         self.start = tuple()
         self.end = tuple()
         self.path = []
+        self.shortLength = 1000000
+        self.length = 0
+        self.hasPath=False
     def __str__(self)->str:
         if len(self.heightMap) == 0:
             return "Data must be loaded (with loadHeightMap()) before Maze can be used."
@@ -37,7 +39,7 @@ class Maze:
                 elif cell == 'E':
                     self.end=(cNum,rNum)
 
-        # need to create and zero out the I've been here mask
+        #Need to create and zero out the I've been here mask
         #self.whereIveBeen = [[0] * len(self.heightMap[0])] * len(self.heightMap)
         for r in range(len(self.heightMap)):
             row = []
@@ -73,38 +75,37 @@ class Maze:
             return False
         #We should be OK    
         return True
-    def findShortestPath(self)->int:
-        dist = 0
-        print(f'{self.start}->{self.end}')
-        x=self.start[0]
-        y=self.start[1]
-        self.whereIveBeen[y][x]=1
-        nRows = len(self.heightMap)
-        nCols = len(self.heightMap[0])
-        dist1 = nRows*nCols+1
-        dist2 = dist1
-        dist3 = dist2
-        dist4 = dist3
+    def findShortestPath(self,start):
+        print(f'{start}->{self.end} length: {self.length}')
+        x=start[0]
+        y=start[1]
+   
         if x==self.end[0] and y==self.end[1]: #start == end:
-            print("I think I'm at the end")
-            return dist
+            print("I'm at the end")
+            self.hasPath=True
+            self.shortLength=min([self.length,self.shortLength])
+            return
         else:
+            self.whereIveBeen[y][x]=1
+            self.length = self.length + 1
             #if not in top row, probe up
             if self.canIMoveHere((x,y),(x,y-1)):
                 print("UP")
-                dist1 = findShortestPath((x,y-1), end, nRows)
+                self.findShortestPath((x,y-1))
             #if not in bottom row, probe down
             if self.canIMoveHere((x,y),(x,y+1)):
                 print("DOWN")
-                dist2 = findShortestPath((x,y+1), end, nRows)
+                self.findShortestPath((x,y+1))
             #if not in left col, probe left
             if self.canIMoveHere((x,y),(x-1,y)):
                 print("LEFT")
-                dist3 = findShortestPath((x-1,y), end, nRows)
+                self.findShortestPath((x-1,y))
             #if not in right col, probe right
             if self.canIMoveHere((x,y),(x+1,y)):
                 print("RIGHT")
-                dist4 = findShortestPath((x+1,y), end, nRows)
+                self.findShortestPath((x+1,y))
+            self.whereIveBeen[y][x]=0
+            self.length=self.length-1
 
     def findAPath(self, start)->bool:
         #print(f'{start}->{self.end}')
@@ -173,6 +174,8 @@ class Maze:
 
         return output     
       
+#inputFileName="day12/day12-sample-data.txt"
+inputFileName="day12/day12-input-data.txt"
 
 # create the maze
 maze = Maze()
@@ -184,10 +187,12 @@ with open(inputFileName, 'r') as inputFile:
 print(f'Maze data loaded from {inputFileName}, here is the height map:')
 print(maze)
 
-maze.findAPath(maze.start)
+print(maze.shortLength)
+maze.findShortestPath(maze.start)
+print(maze.shortLength)
 
-print("Here is a path:")
-print(maze.showPath())
-print(f'Path length: {len(maze.path)}')
+# print("Here is a path:")
+# print(maze.showPath())
+# print(f'Path length: {len(maze.path)}')
 
 
