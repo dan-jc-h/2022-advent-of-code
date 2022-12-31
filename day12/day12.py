@@ -2,6 +2,7 @@
 #   https://adventofcode.com/2022/day/12
 # Part 2 - Find the shortest path across a graph, being mindful of altitude.
 
+import sys
 
 class Maze:
     def __init__(self):
@@ -10,7 +11,9 @@ class Maze:
         self.start = tuple()
         self.end = tuple()
         self.path = []
-        self.shortLength = 1000000
+        self.shortestPath = []
+        self.tempPath = []
+        self.shortLength = sys.maxsize
         self.length = 0
         self.hasPath=False
         self.heartbeat = 0
@@ -39,9 +42,12 @@ class Maze:
                     self.start=(cNum,rNum)
                 elif cell == 'E':
                     self.end=(cNum,rNum)
+        self.resetWhereHaveIBeen();
 
+    def resetWhereHaveIBeen(self):
         #Need to create and zero out the I've been here mask
         #self.whereIveBeen = [[0] * len(self.heightMap[0])] * len(self.heightMap)
+        self.whereIveBeen=[]
         for r in range(len(self.heightMap)):
             row = []
             for c in range(len(self.heightMap[0])):
@@ -49,6 +55,7 @@ class Maze:
             self.whereIveBeen.append(row)
         # and then set the Start location to 1 (we are already there)
         self.whereIveBeen[self.start[1]][self.start[0]]
+
     def canIMoveHere(self,currentLocation:tuple,testLocation:tuple) -> bool:
         currentx=currentLocation[0]
         currenty=currentLocation[1]
@@ -76,24 +83,27 @@ class Maze:
             return False
         #We should be OK    
         return True
-    #TODO - I think we need to copy the path to a new "shortest path" every time we get to the end and find the path is at a minima
+
     def findShortestPath(self,start):
-        print(f'{start}->{self.end} length: {self.shortLength}')
+        #print(f'{start}->{self.end} length: {self.shortLength}')
         self.heartbeat = self.heartbeat + 1
-        if self.heartbeat % 10000 == 0:
+        if self.heartbeat % 250 == 0:
             print(f'\t{self.heartbeat} calls to findShortestPath() - current shortest: {self.shortLength}.')
         x=start[0]
         y=start[1]
    
+        self.tempPath.append(start)
         if x==self.end[0] and y==self.end[1]: #start == end:
-            print(f"I'm at the end, length={self.shortLength}, path_{self.path}")
             self.hasPath=True
             self.shortLength=min([self.length,self.shortLength])
+            if self.length == self.shortLength:
+                self.shortestPath=self.tempPath.copy()
+                print(f"I'm at the end, iteration:{self.heartbeat}, length={self.shortLength}, path_{self.shortestPath}")
             return
+
         else:
             self.whereIveBeen[y][x]=1
             self.length = self.length + 1
-            self.path.append(start)
             #if not in top row, probe up
             if self.canIMoveHere((x,y),(x,y-1)):
                 #print("UP")
@@ -111,7 +121,7 @@ class Maze:
                 #print("RIGHT")
                 self.findShortestPath((x+1,y))
             self.whereIveBeen[y][x]=0
-            self.path.pop()
+            self.tempPath.pop()
             self.length=self.length-1
 
     def findAPath(self, start)->bool:
@@ -145,7 +155,7 @@ class Maze:
 
             #not at end
             return False
-    def showPath(self)->str:
+    def showPath(self, path:[])->str:
         #make empty grid with dots
         grid=[]
         for r in range(len(self.heightMap)):
@@ -154,18 +164,18 @@ class Maze:
                 row.append(".")
             grid.append(row)
         #add in path
-        for stepNum in range(len(self.path)-1):
-            #print(self.path[stepNum], self.path[stepNum+1])
-            deltax = self.path[stepNum+1][0] - self.path[stepNum][0]
-            deltay = self.path[stepNum+1][1] - self.path[stepNum][1]
+        for stepNum in range(len(path)-1):
+            #print(path[stepNum], path[stepNum+1])
+            deltax = path[stepNum+1][0] - path[stepNum][0]
+            deltay = path[stepNum+1][1] - path[stepNum][1]
             if (deltax,deltay) == (0,1): # down
-                grid[self.path[stepNum][1]][self.path[stepNum][0]] = 'V'
+                grid[path[stepNum][1]][path[stepNum][0]] = 'V'
             if (deltax,deltay) == (0,-1): # up
-                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '^'               
+                grid[path[stepNum][1]][path[stepNum][0]] = '^'               
             if (deltax,deltay) == (-1,0): # left
-                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '<'
+                grid[path[stepNum][1]][path[stepNum][0]] = '<'
             if (deltax,deltay) == (1,0): # right
-                grid[self.path[stepNum][1]][self.path[stepNum][0]] = '>'
+                grid[path[stepNum][1]][path[stepNum][0]] = '>'
         #mark S and E
         grid[self.start[1]][self.start[0]] = 'S'
         grid[self.end[1]][self.end[0]] = 'E'        
@@ -194,15 +204,27 @@ with open(inputFileName, 'r') as inputFile:
 print(f'Maze data loaded from {inputFileName}, here is the height map:')
 print(maze)
 
+maze.findAPath(maze.start)
+print("Here is a path:")
+print(maze.path)
+print(maze.showPath(maze.path))
+print(f'Path length: {len(maze.path)}')
+
+maze.resetWhereHaveIBeen() #FIXME _ this should be automatic once either findAPath or findShortestPath completes
+
 print("Looking for shortest path...")
 maze.findShortestPath(maze.start)
 print(f'Shortest Path found is {maze.shortLength} units long.')
 print(f'{maze.heartbeat} calls to the shortest path routine were made.')
 print("Here is the shortest path:")
-print(maze.showPath())
+print(maze.shortestPath)
 
-# print("Here is a path:")
-# print(maze.showPath())
-# print(f'Path length: {len(maze.path)}')
+print(len(maze.shortestPath))
+print(len(maze.tempPath))
+
+print(maze.tempPath)
+print(maze.showPath(maze.tempPath))
+
+
 
 
