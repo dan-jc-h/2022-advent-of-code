@@ -46,3 +46,12 @@ with `pop(0)`... e.g.
 This could have been avoided by defining a `list.first()` and `list.last()`,
 or `list.head()` and `list.tail()`, functions.  Or using some module that defines
 queue operations of which I suspect there are many.
+
+## Day 12 Part 2
+
+Once I finally had Part 1 working, part 1 took less than 5 minutes.  You need to calculate
+the shortest path from all the points at 'a' altitude, and my routine to find
+the shortest path already took a start point as an optional parameter, so it 
+was very easy to loop over the grid and calculate the distance from all possible
+locations then just grab the smallest of those values.  I think it took longer to write this
+description than to code and run this part.

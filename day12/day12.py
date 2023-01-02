@@ -1,6 +1,7 @@
 # 2022 Advent of Code - Day 12
 #   https://adventofcode.com/2022/day/12
-# Part 2 - Find the shortest path across a graph, being mindful of altitude.
+# Part 1 - Find the shortest path across a graph, being mindful of altitude.
+# Part 2 - similar, just try to find the shortest path from a number of points
 
 import sys
 
