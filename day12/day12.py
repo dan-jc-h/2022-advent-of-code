@@ -8,17 +8,9 @@ import random
 class Maze:
     def __init__(self):
         self.heightMap = []
-        self.whereIveBeen = []
         self.start = tuple()
         self.end = tuple()
-        self.path = []
-        self.shortestPath = []
-        self.tempPath = []
-        self.shortLength = sys.maxsize
-        self.length = 0
-        self.hasPath=False
-        self.heartbeat = 0
-        self.bfsVisited=[]
+        self.bfsVisited=set()
         self.bfsQueue=[]
         self.bfsDists=[]
     def __str__(self)->str:
@@ -46,9 +38,6 @@ class Maze:
                     self.start=(cNum,rNum)
                 elif cell == 'E':
                     self.end=(cNum,rNum)
-
-
-
     def canIMoveHerebfs(self,currentLocation:tuple,testLocation:tuple) -> bool:
         currentx=currentLocation[0]
         currenty=currentLocation[1]
@@ -77,11 +66,7 @@ class Maze:
         #We should be OK    
         return True
 
- 
-
- 
-
-    def bfs(self,start):
+    def bfs(self,_start):
         #set all distances to something big
         self.bfsDists=[]
         for r in range(len(self.heightMap)):
@@ -89,96 +74,30 @@ class Maze:
             for c in range(len(self.heightMap[0])):
                 row.append(sys.maxsize)
             self.bfsDists.append(row)
-        self.bfsVisited.append(start)
-        self.bfsQueue.append(start)
-        self.bfsDists[start[1]][start[0]]=0
+        # add start node to queue and visited set, and mark this dist to 0 (starting)
+        self.bfsVisited.clear()
+        self.bfsVisited.add(_start)
+        self.bfsQueue.clear()
+        self.bfsQueue.append(_start)
+        self.bfsDists[_start[1]][_start[0]]=0
+        # keep going while there is anywhere left to search
         while self.bfsQueue:
-            (x,y)=self.bfsQueue.pop()
+            #print(self.bfsQueue)
+            # get next location
+            (x,y)=self.bfsQueue.pop(0)
+            # found the end point! Could stop now.
             if (x,y)==self.end:
                 print(f"TADA - {self.bfsDists[y][x]}")
             #probe in cardinal directions.
-            deltas = [(0,-1),(0,+1),(-1,0),(+1,0)]
-            for delta in deltas:
-                dx=delta[0]
-                dy=delta[1]
+            for dx,dy in [(0,-1),(0,+1),(-1,0),(+1,0)]:
+                if (x+dx,y+dy) == (0,18):
+                    zzz=1
                 if self.canIMoveHerebfs((x,y),(x+dx,y+dy)):
-                    self.bfsVisited.append((x+dx,y+dy))
+                    self.bfsVisited.add((x+dx,y+dy))
                     self.bfsQueue.append((x+dx,y+dy))
                     self.bfsDists[y+dy][x+dx]=self.bfsDists[y][x] + 1 #TODO is having this in the delta loop blowing up counts on nearby cells
 
 
-
-
-
-
-
-    def findAPath(self, start)->bool:
-        #print(f'{start}->{self.end}')
-        x=start[0]
-        y=start[1]
-        self.whereIveBeen[y][x]=1
-        self.path.append(start)
-        nRows = len(self.heightMap)
-        nCols = len(self.heightMap[0])
-        if x==self.end[0] and y==self.end[1]: #start == end:
-            #print("I'm at the end")
-            return True
-        else:
-            #if not in top row, probe up
-            if self.canIMoveHere((x,y),(x,y-1)):
-                #print("UP")
-                self.findAPath((x,y-1))
-            #if not in bottom row, probe down
-            if self.canIMoveHere((x,y),(x,y+1)):
-                #print("DOWN")
-                self.findAPath((x,y+1))
-            #if not in left col, probe left
-            if self.canIMoveHere((x,y),(x-1,y)):
-                #print("LEFT")
-                self.findAPath((x-1,y))
-            #if not in right col, probe right
-            if self.canIMoveHere((x,y),(x+1,y)):
-                #print("RIGHT")
-                self.findAPath((x+1,y))
-
-            #not at end
-            return False
-    def showPath(self, path:[])->str:
-        #make empty grid with dots
-        grid=[]
-        for r in range(len(self.heightMap)):
-            row = []
-            for c in range(len(self.heightMap[0])):
-                row.append(".")
-            grid.append(row)
-        #add in path
-        for stepNum in range(len(path)-1):
-            #print(path[stepNum], path[stepNum+1])
-            deltax = path[stepNum+1][0] - path[stepNum][0]
-            deltay = path[stepNum+1][1] - path[stepNum][1]
-            if (deltax,deltay) == (0,1): # down
-                grid[path[stepNum][1]][path[stepNum][0]] = 'V'
-            if (deltax,deltay) == (0,-1): # up
-                grid[path[stepNum][1]][path[stepNum][0]] = '^'               
-            if (deltax,deltay) == (-1,0): # left
-                grid[path[stepNum][1]][path[stepNum][0]] = '<'
-            if (deltax,deltay) == (1,0): # right
-                grid[path[stepNum][1]][path[stepNum][0]] = '>'
-        #mark S and E
-        grid[self.start[1]][self.start[0]] = 'S'
-        grid[self.end[1]][self.end[0]] = 'E'        
-        #generate string
-        output = ""
-        for r in range(len(self.heightMap)):
-            for c in range(len(self.heightMap[0])):
-                output = output + grid[r][c]
-            output = output + "\n"
-
-        return output
-
-
-        return output     
-      
 inputFileName="day12/day12-sample-data.txt"
 inputFileName="day12/day12-input-data.txt"
 
@@ -192,41 +111,24 @@ with open(inputFileName, 'r') as inputFile:
 # print(f'Maze data loaded from {inputFileName}, here is the height map:')
 # print(maze)
 
-# maze.findAPath(maze.start)
-# print("Here is a path:")
-# print(maze.path)
-# print(maze.showPath(maze.path))
-# print(f'Path length: {len(maze.path)}')
-
-# maze.resetWhereHaveIBeen() #FIXME _ this should be automatic once either findAPath or findShortestPath completes
-
-
-
-# print("Looking for shortest path...")
-# maze.findShortestPath(maze.start)
-# print(f'Shortest Path found is {maze.shortLength} units long.')
-# print(f'{maze.heartbeat} calls to the shortest path routine were made.')
-# print("Here is the shortest path:")
-# print(maze.shortestPath)
-
-
-# # #FIXME _ why do I need to append the maze.end here to get the drawing to work right (loses last element)?
-# # maze.shortestPath.append(maze.end)
-
-# print(maze.showPath(maze.shortestPath))
-
+print("Looking for shortest path...")
 maze.bfs(maze.start)
+print(f'Shortest path length: {maze.bfsDists[maze.end[1]][maze.end[0]]}')
 
-#print(maze.bfsDists)
+# for y,r in enumerate(maze.bfsDists):
+#      output=""
+#      for x,c in enumerate(r):
+#          if c > 999:
+#              c=999
+#          output = output + f' {maze.heightMap[y][x]}{c:3d},'
+#      print(output)
 
-print(maze.bfsDists[maze.end[1]][maze.end[0]])
-
-# for r in maze.bfsDists:
-#     output=""
-#     for c in r:
-#         if c > 999:
-#             c=999
-#         output = output + f' {c:3d},'
-#     print(output)
+for y,r in enumerate(maze.bfsDists):
+     output=""
+     for x,c in enumerate(r[0:2]):
+         if c > 999:
+             c=999
+         output = output + f' {maze.heightMap[y][x]}{c:3d},'
+     print(output)
 
 
