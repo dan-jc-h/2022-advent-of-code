@@ -189,3 +189,20 @@
 
 
 --------------
+
+# for y,r in enumerate(maze.bfsDists):
+#      output=""
+#      for x,c in enumerate(r):
+#          if c > 999:
+#              c=999
+#          output = output + f' {maze.heightMap[y][x]}{c:3d},'
+#      print(output)
+
+for y,r in enumerate(maze.bfsDists):
+     output=""
+     for x,c in enumerate(r[0:2]):
+         if c > 999:
+             c=999
+         output = output + f' {maze.heightMap[y][x]}{c:3d},'
+     print(output)
+
