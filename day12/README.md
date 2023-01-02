@@ -11,10 +11,10 @@ stuck one this one and beat my head against if for a while.  The problem was tha
 I screwed up accessing a list I was using as a queue.  I had to add things to one
 end of a queue and then remove them from the other... FIFO.  I screwed up and was
 adding to then grabbing from the same end, so it was LIFO
-(more of a stack than a queue).  (It seems to me that this 
+(more of a stack than a queue).  (It seems to me that this
 screwed me up at some point in the past as well.)
 
-In python `list.pop()` takes from the end of the list, and `list.append()` adds 
+In python `list.pop()` takes from the end of the list, and `list.append()` adds
 to the end, this is what I was doing... e.g.
 
 ````python
@@ -23,7 +23,7 @@ to the end, this is what I was doing... e.g.
     q.append(7)
     q.append(8)
     q.append(2)
-    # get somthing from the queue
+    # get something from the queue
     x = q.pop()
     # x will equal 2
 ````
@@ -38,7 +38,7 @@ with `pop(0)`... e.g.
     q.append(7)
     q.append(8)
     q.append(2)
-    # get somthing from the queue
+    # get something from the queue
     x = q.pop(0)
     # x will equal 7
 ````
