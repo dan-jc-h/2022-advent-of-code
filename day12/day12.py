@@ -86,12 +86,14 @@ class Maze:
             return False
         #We should be OK    
         return True
-    def bfs(self,_start:tuple):
+    def bfs(self,_start:tuple=None):
         """BFS search of the maze which determines distances as it goes.
 
         Args:
-            _start (tuple): place to start (x.y)
+            _start (tuple): place to start (x,y).  If omitted defaults to the "S" location from the data file.
         """
+        if _start is None:
+            _start=self.start
         #set all distances to something big
         self.bfsDists=[]
         for r in range(len(self.heightMap)):
@@ -136,7 +138,7 @@ maze.loadHeightMapFromFile(inputFileName)
 
 # find shortest path
 print("Looking for shortest path...")
-maze.bfs(maze.start)
+maze.bfs()
 print(f'Shortest path length: {maze.bfsDists[maze.end[1]][maze.end[0]]}')
 
 
