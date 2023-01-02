@@ -92,9 +92,13 @@ class Maze:
         Args:
             _start (tuple): place to start (x,y).  If omitted defaults to the "S" location from the data file.
         """
+        # if no start point provided, use self.start
         if _start is None:
             _start=self.start
-        #set all distances to something big
+        # initialize visited set and queue
+        self.bfsVisited.clear()
+        self.bfsQueue.clear()
+        # set all distances to something big
         self.bfsDists=[]
         for r in range(len(self.heightMap)):
             row = []
@@ -122,7 +126,10 @@ class Maze:
 # # # # # # # #  
 #   M A I N   #
 # # # # # # # #
-print("* * * ADVENT OF CODE 2022 - DAY 12")                   
+print(" "+ "* "*19)
+print("* * * ADVENT OF CODE 2022 - DAY 12 * * *")
+print("* * *          - Part 1 -          * * *")   
+print(" "+ "* "*19)                
 # where to find input
 inputFileName="day12/day12-sample-data.txt"
 inputFileName="day12/day12-input-data.txt"
@@ -140,6 +147,20 @@ maze.loadHeightMapFromFile(inputFileName)
 print("Looking for shortest path...")
 maze.bfs()
 print(f'Shortest path length: {maze.bfsDists[maze.end[1]][maze.end[0]]}')
+
+print(" "+ "* "*19)
+print("* * *          - Part 2 -          * * *")   
+print(" "+ "* "*19)  
+# Find the shortest path starting from any elevation "a" (or the start point) on the map
+print("Looking for shortest path from any place with elevation 'a'...")
+distances = []
+for r in range(len(maze.heightMap)):
+    for c in range(len(maze.heightMap[0])):
+        if maze.heightMap[r][c] == 'a' or maze.heightMap[r][c] == 'S':
+            maze.bfs((c,r))
+            distances.append(maze.bfsDists[maze.end[1]][maze.end[0]])
+print(f'Shortest path length from any place with elevation \'a\': {min(distances)}')
+print(f'... looked at {len(distances)} possibilities.')
 
 
 
