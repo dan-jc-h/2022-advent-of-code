@@ -3,6 +3,7 @@
 # Part 2 - Find the shortest path across a graph, being mindful of altitude.
 
 import sys
+import random
 
 class Maze:
     def __init__(self):
@@ -17,6 +18,9 @@ class Maze:
         self.length = 0
         self.hasPath=False
         self.heartbeat = 0
+        self.bfsVisited=[]
+        self.bfsQueue=[]
+        self.bfsDists=[]
     def __str__(self)->str:
         if len(self.heightMap) == 0:
             return "Data must be loaded (with loadHeightMap()) before Maze can be used."
@@ -42,21 +46,10 @@ class Maze:
                     self.start=(cNum,rNum)
                 elif cell == 'E':
                     self.end=(cNum,rNum)
-        self.resetWhereHaveIBeen();
 
-    def resetWhereHaveIBeen(self):
-        #Need to create and zero out the I've been here mask
-        #self.whereIveBeen = [[0] * len(self.heightMap[0])] * len(self.heightMap)
-        self.whereIveBeen=[]
-        for r in range(len(self.heightMap)):
-            row = []
-            for c in range(len(self.heightMap[0])):
-                row.append(0)
-            self.whereIveBeen.append(row)
-        # and then set the Start location to 1 (we are already there)
-        self.whereIveBeen[self.start[1]][self.start[0]]
 
-    def canIMoveHere(self,currentLocation:tuple,testLocation:tuple) -> bool:
+
+    def canIMoveHerebfs(self,currentLocation:tuple,testLocation:tuple) -> bool:
         currentx=currentLocation[0]
         currenty=currentLocation[1]
         x=testLocation[0]
@@ -67,7 +60,7 @@ class Maze:
         if x<0 or y<0 or x>maxCols-1 or y>maxRows-1: 
             return False
         #Check to make sure we haven't been to the test location yet
-        if self.whereIveBeen[y][x] == 1:
+        if testLocation in self.bfsVisited:
             return False
         # Check height map to see if we can go to the test location.  
         # Height of test location can be no more than "1" unit more 
@@ -84,45 +77,40 @@ class Maze:
         #We should be OK    
         return True
 
-    def findShortestPath(self,start):
-        #print(f'{start}->{self.end} length: {self.shortLength}')
-        self.heartbeat = self.heartbeat + 1
-        if self.heartbeat % 250 == 0:
-            print(f'\t{self.heartbeat} calls to findShortestPath() - current shortest: {self.shortLength}.')
-        x=start[0]
-        y=start[1]
-   
-        self.tempPath.append(start)
-        if x==self.end[0] and y==self.end[1]: #start == end:
-            self.hasPath=True
-            self.shortLength=min([self.length,self.shortLength])
-            if self.length == self.shortLength:
-                self.shortestPath=self.tempPath.copy()
-                print(f"I'm at the end, iteration:{self.heartbeat}, length={self.shortLength}, path_{self.shortestPath}")
-            return
+ 
 
-        else:
-            self.whereIveBeen[y][x]=1
-            self.length = self.length + 1
-            #if not in top row, probe up
-            if self.canIMoveHere((x,y),(x,y-1)):
-                #print("UP")
-                self.findShortestPath((x,y-1))
-            #if not in bottom row, probe down
-            if self.canIMoveHere((x,y),(x,y+1)):
-                #print("DOWN")
-                self.findShortestPath((x,y+1))
-            #if not in left col, probe left
-            if self.canIMoveHere((x,y),(x-1,y)):
-                #print("LEFT")
-                self.findShortestPath((x-1,y))
-            #if not in right col, probe right
-            if self.canIMoveHere((x,y),(x+1,y)):
-                #print("RIGHT")
-                self.findShortestPath((x+1,y))
-            self.whereIveBeen[y][x]=0
-            self.tempPath.pop()
-            self.length=self.length-1
+ 
+
+    def bfs(self,start):
+        #set all distances to something big
+        self.bfsDists=[]
+        for r in range(len(self.heightMap)):
+            row = []
+            for c in range(len(self.heightMap[0])):
+                row.append(sys.maxsize)
+            self.bfsDists.append(row)
+        self.bfsVisited.append(start)
+        self.bfsQueue.append(start)
+        self.bfsDists[start[1]][start[0]]=0
+        while self.bfsQueue:
+            (x,y)=self.bfsQueue.pop()
+            if (x,y)==self.end:
+                print(f"TADA - {self.bfsDists[y][x]}")
+            #probe in cardinal directions.
+            deltas = [(0,-1),(0,+1),(-1,0),(+1,0)]
+            for delta in deltas:
+                dx=delta[0]
+                dy=delta[1]
+                if self.canIMoveHerebfs((x,y),(x+dx,y+dy)):
+                    self.bfsVisited.append((x+dx,y+dy))
+                    self.bfsQueue.append((x+dx,y+dy))
+                    self.bfsDists[y+dy][x+dx]=self.bfsDists[y][x] + 1 #TODO is having this in the delta loop blowing up counts on nearby cells
+
+
+
+
+
+
 
     def findAPath(self, start)->bool:
         #print(f'{start}->{self.end}')
@@ -192,7 +180,7 @@ class Maze:
         return output     
       
 inputFileName="day12/day12-sample-data.txt"
-#inputFileName="day12/day12-input-data.txt"
+inputFileName="day12/day12-input-data.txt"
 
 # create the maze
 maze = Maze()
@@ -201,30 +189,44 @@ maze = Maze()
 with open(inputFileName, 'r') as inputFile:
     maze.loadHeightMapFromFile(inputFileName)
 
-print(f'Maze data loaded from {inputFileName}, here is the height map:')
-print(maze)
+# print(f'Maze data loaded from {inputFileName}, here is the height map:')
+# print(maze)
 
-maze.findAPath(maze.start)
-print("Here is a path:")
-print(maze.path)
-print(maze.showPath(maze.path))
-print(f'Path length: {len(maze.path)}')
+# maze.findAPath(maze.start)
+# print("Here is a path:")
+# print(maze.path)
+# print(maze.showPath(maze.path))
+# print(f'Path length: {len(maze.path)}')
 
-maze.resetWhereHaveIBeen() #FIXME _ this should be automatic once either findAPath or findShortestPath completes
-
-print("Looking for shortest path...")
-maze.findShortestPath(maze.start)
-print(f'Shortest Path found is {maze.shortLength} units long.')
-print(f'{maze.heartbeat} calls to the shortest path routine were made.')
-print("Here is the shortest path:")
-print(maze.shortestPath)
-
-print(len(maze.shortestPath))
-print(len(maze.tempPath))
-
-print(maze.tempPath)
-print(maze.showPath(maze.tempPath))
+# maze.resetWhereHaveIBeen() #FIXME _ this should be automatic once either findAPath or findShortestPath completes
 
 
+
+# print("Looking for shortest path...")
+# maze.findShortestPath(maze.start)
+# print(f'Shortest Path found is {maze.shortLength} units long.')
+# print(f'{maze.heartbeat} calls to the shortest path routine were made.')
+# print("Here is the shortest path:")
+# print(maze.shortestPath)
+
+
+# # #FIXME _ why do I need to append the maze.end here to get the drawing to work right (loses last element)?
+# # maze.shortestPath.append(maze.end)
+
+# print(maze.showPath(maze.shortestPath))
+
+maze.bfs(maze.start)
+
+#print(maze.bfsDists)
+
+print(maze.bfsDists[maze.end[1]][maze.end[0]])
+
+# for r in maze.bfsDists:
+#     output=""
+#     for c in r:
+#         if c > 999:
+#             c=999
+#         output = output + f' {c:3d},'
+#     print(output)
 
 
